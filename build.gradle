@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'me.gsqlin.chatgpt.ChatGPT'
+
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    compileOnly 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
+    compileOnly 'commons-io:commons-io:2.8.0'
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+def targetJavaVersion = 8
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand project.properties
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.compileClasspath]
+    dependencies {
+/*        exclude(dependency('org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'))
+        exclude(dependency('com.google.guava:guava:21.0'))
+        exclude(dependency('com.google.code.gson:gson:2.8.0'))*/
+    }
+}
