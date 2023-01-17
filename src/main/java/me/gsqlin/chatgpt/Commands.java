@@ -11,24 +11,37 @@ import java.io.IOException;
 public class Commands implements CommandExecutor {
     ChatGPT plugin = ChatGPT.getInstance();
 
+    String[] help = new String[]{
+            "HELP↓",
+            "help",
+            "chat",
+            "setup",
+            "reload"
+    };
     @Override
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("chat")){
                 if (args.length >= 2){
                     String Msg = getMsg(args,1);
-                    String bt = plugin.javaSend;
-                    Msg += bt;
-                    try {
-                        String data = FileUtils.readFileToString(plugin.data,"UTF-8");
-                        if (data.contains(bt)){
-                            plugin.getLogger().info("§6我正在编辑>>>§r"+data.replace(bt,"")+"§6<<<这个问题的回答");
-                        }else{
-                            plugin.getLogger().info("§a往ChatGPT发送>>> "+Msg.replace(bt,""));
-                            FileUtils.writeStringToFile(plugin.data,Msg,"UTF-8");
+                    String key = plugin.getConfig().getString("APISet.APIKey");
+                    if (key == ""){
+                        String bt = plugin.javaSend;
+                        Msg += bt;
+                        try {
+                            String data = FileUtils.readFileToString(plugin.data,"UTF-8");
+                            if (data.contains(bt)){
+                                sender.sendMessage("§6我正在编辑>>>§r"+data.replace(bt,"")+"§6<<<这个问题的回答");
+                            }else{
+                                plugin.getLogger().info("§a往ChatGPT发送>>> "+Msg.replace(bt,""));
+                                FileUtils.writeStringToFile(plugin.data,Msg,"UTF-8");
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    }else{
+                        plugin.getLogger().info("§a往ChatGPT发送>>> "+Msg);
+                        plugin.msgs.add(Msg);
                     }
                 }else{
                     sender.sendMessage("§c没有发送内容不能发送");
@@ -55,11 +68,17 @@ public class Commands implements CommandExecutor {
                     }
                     return false;
                 }
-                plugin.getLogger().info("§c温馨提示>>> 在个一个2或者3的参数,根据你是python几");
+                sender.sendMessage("§c温馨提示>>> 在个一个2或者3的参数,根据你是python几");
                 return false;
             }
+            if (args[0].equalsIgnoreCase("reload")){
+                plugin.reload();
+                sender.sendMessage("§a重载完成!");
+                return false;
+            }
+            sender.sendMessage(help);
         }else{
-            sender.sendMessage("§c用法/gpt [信息]");
+            sender.sendMessage(help);
         }
         return false;
     }

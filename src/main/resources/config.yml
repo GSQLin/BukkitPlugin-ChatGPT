@@ -1,0 +1,9 @@
+#本项内所有配置都是使用api的用的是003不是chatgpt哦
+APISet:
+  #如果APIKey填了就使用gpt003的api来访问(速度快)/如果直接是 APIKey: ''那么就是要用网页和python的那个方法了
+  APIKey: ''
+  #长度不建议太长，(毕竟api消耗太快，你钱包用扛不住)，不过太短回答补全,7的话正好就是回答是活着不是这样的问题
+  Maximum-length: 16
+  #这个是幽默程度，最大是1，可以写到后两位数
+  Temperature: 0.7
+ReplyFormat: '&r<&bChat&3GPT&r>&7:&r{reply}'

@@ -35,7 +35,7 @@ public class FileListener implements FileAlterationListener {
             public void run() {
                 try {
                     monitor.start();
-                    plugin.getLogger().info("\n开始监测文件夹："+ folder);
+                    plugin.getLogger().info("§a开始监测文件夹："+ folder);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

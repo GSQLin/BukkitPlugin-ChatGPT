@@ -1,22 +1,34 @@
 package me.gsqlin.chatgpt;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ChatGPT extends JavaPlugin{
     File data;
     FileListener listener;
 
+    List<String> msgs = new ArrayList<>();
     String javaSend = "!ThisIsJavaSend!!ThisGSQ!!!";
 
     String pythonSend = "!ThisIsPythonSend!!ThisGSQ!!!";
+
+    Gson gson = new Gson();
     @Override
     public void onLoad() {
         getLogger().info("§3插件加载中ing...");
@@ -27,11 +39,10 @@ public class ChatGPT extends JavaPlugin{
 
     @Override
     public void onEnable() {
-        saveResource("data.txt",true);
-        saveResource("ChatGPT.py",false);
-        saveResource("requirements.txt",true);
+        reload();
         data = new File(getDataFolder().getAbsolutePath()+File.separator+"data.txt");
         getCommand("chatgpt").setExecutor(new Commands());
+        getServer().getPluginManager().registerEvents(new PlayerListener(),this);
         listener = new FileListener(getDataFolder().getAbsolutePath(),"data.txt",null);
         listener.setRun(()->{
             Collection<? extends Player> players = Bukkit.getOnlinePlayers();
@@ -42,12 +53,31 @@ public class ChatGPT extends JavaPlugin{
                 throw new RuntimeException(e);
             }
             if (msg.contains(javaSend)) return;
-            msg = "§bChat§3GPT§7>>> §r"+ msg.replace(pythonSend,"");
-            getLogger().info(msg);
+            String reply = getConfig().getString("ReplyFormat")
+                    .replace("{reply}",msg.replace(pythonSend,""))
+                    .replace("&","§");
+            getLogger().info(reply);
             for (Player player : players) {
-                player.sendMessage(msg);
+                player.sendMessage(reply);
             }
         });
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                if (msgs.size() >= 1){
+                    String send = msgs.get(0);
+                    msgs.remove(send);
+                    String reply = gpt003Send(getConfig().getString("APISet.APIKey"),send);
+                    getLogger().info(reply);
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        player.sendMessage(getConfig().getString("ReplyFormat")
+                                .replace("&","§")
+                                .replace("{reply}",reply).replace("\n",""));
+                    }
+                }
+            }
+        }.runTaskTimerAsynchronously(this,0,20);
+        getLogger().info("§a插件已载入");
     }
 
     @Override
@@ -63,5 +93,49 @@ public class ChatGPT extends JavaPlugin{
 
     public static ChatGPT getInstance() {
         return ((ChatGPT) Bukkit.getServer().getPluginManager().getPlugin("ChatGPT"));
+    }
+
+    public String gpt003Send(String key,String msg){
+        String reply = null;
+        try {
+            URL url = new URL("https://api.openai.com/v1/completions");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            conn.setRequestProperty("Authorization", "Bearer "+key);
+            conn.setDoOutput(true);
+
+            String data = "{\"model\": \"text-davinci-003\", " +
+                    "\"prompt\": \""+msg+"\", " +
+                    "\"temperature\": "+getConfig().getInt("APISet.Temperature")+", " +
+                    "\"max_tokens\": "+getConfig().getInt("APISet.Maximum-length")+"}";
+            OutputStream ot = conn.getOutputStream();
+            ot.write(data.getBytes("UTF-8"));
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code :继续"+ conn.getResponseCode());
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream()), StandardCharsets.UTF_8));
+            StringBuilder line = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                line.append(output);
+            }
+            reply = line.toString();
+            conn.disconnect();
+            ot.close();
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("原句:"+reply);
+        JsonObject json = gson.fromJson(reply+"", JsonObject.class);
+        return json.get("choices").getAsJsonArray().get(0).getAsJsonObject().get("text").getAsString();
+    }
+
+    public void reload(){
+        saveDefaultConfig();
+        saveResource("data.txt",true);
+        saveResource("ChatGPT.py",false);
+        saveResource("requirements.txt",true);
     }
 }
