@@ -1,8 +1,6 @@
 package me.gsqlin.chatgpt;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
@@ -105,10 +103,11 @@ public class ChatGPT extends JavaPlugin{
             conn.setRequestProperty("Authorization", "Bearer "+key);
             conn.setDoOutput(true);
 
-            String data = "{\"model\": \"text-davinci-003\", " +
-                    "\"prompt\": \""+msg+"\", " +
-                    "\"temperature\": "+getConfig().getInt("APISet.Temperature")+", " +
-                    "\"max_tokens\": "+getConfig().getInt("APISet.Maximum-length")+"}";
+            SendJson sendJson = new SendJson();
+            sendJson.setPrompt(msg);
+            sendJson.setTemperature(getConfig().getDouble("APISet.Temperature"));
+            sendJson.setMaxTokens(getConfig().getInt("APISet.Maximum-length"));
+            String data = gson.toJson(sendJson);
             OutputStream ot = conn.getOutputStream();
             ot.write(data.getBytes("UTF-8"));
             if (conn.getResponseCode() != 200) {
