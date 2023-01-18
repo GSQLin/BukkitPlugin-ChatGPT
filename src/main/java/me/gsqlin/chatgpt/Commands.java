@@ -16,7 +16,8 @@ public class Commands implements CommandExecutor {
             "help",
             "chat",
             "setup",
-            "reload"
+            "reload",
+            "clean"
     };
     @Override
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
@@ -75,6 +76,10 @@ public class Commands implements CommandExecutor {
                 plugin.reload();
                 sender.sendMessage("§a重载完成!");
                 return false;
+            }
+            if (args[0].equalsIgnoreCase("clean")){
+                SendJson.record.clear();
+                plugin.getLogger().info("§a已经清理了对话记录");
             }
             sender.sendMessage(help);
         }else{

@@ -6,4 +6,6 @@ APISet:
   Maximum-length: 16
   #这个是幽默程度，最大是1，可以写到后两位数
   Temperature: 0.7
+  #是否有历史记录,如果设置为true那么玩家问问题的时候gpt会联系上面的内容进行回答,如果设置为false那么每个问题就不会考虑到之前说的
+  Record: true
 ReplyFormat: '&r<&bChat&3GPT&r>&7:&r{reply}'

@@ -9,6 +9,7 @@ public class PlayerListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e){
         if (e.getMessage().contains("@ChatGPT")){
             e.getPlayer().performCommand("chatgpt chat "+ e.getMessage().replace("@ChatGPT",""));
+            e.setMessage(e.getMessage().replace("@ChatGPT","§3@ChatGPT§r"));
         }
     }
 }

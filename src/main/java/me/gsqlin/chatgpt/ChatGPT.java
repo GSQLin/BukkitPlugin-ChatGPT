@@ -27,6 +27,8 @@ public class ChatGPT extends JavaPlugin{
     String pythonSend = "!ThisIsPythonSend!!ThisGSQ!!!";
 
     Gson gson = new Gson();
+
+    SendJson sendJson = new SendJson();
     @Override
     public void onLoad() {
         getLogger().info("§3插件加载中ing...");
@@ -94,7 +96,7 @@ public class ChatGPT extends JavaPlugin{
     }
 
     public String gpt003Send(String key,String msg){
-        String reply = null;
+        String originalReply = null;
         try {
             URL url = new URL("https://api.openai.com/v1/completions");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -103,7 +105,10 @@ public class ChatGPT extends JavaPlugin{
             conn.setRequestProperty("Authorization", "Bearer "+key);
             conn.setDoOutput(true);
 
-            SendJson sendJson = new SendJson();
+            if (getConfig().getBoolean("APISet.Record")){
+                SendJson.record.add("Player:" + msg);
+                msg = SendJson.getInformationWithRecords();
+            }
             sendJson.setPrompt(msg);
             sendJson.setTemperature(getConfig().getDouble("APISet.Temperature"));
             sendJson.setMaxTokens(getConfig().getInt("APISet.Maximum-length"));
@@ -119,16 +124,18 @@ public class ChatGPT extends JavaPlugin{
             while ((output = br.readLine()) != null) {
                 line.append(output);
             }
-            reply = line.toString();
+            originalReply = line.toString();
             conn.disconnect();
             ot.close();
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("原句:"+reply);
-        JsonObject json = gson.fromJson(reply+"", JsonObject.class);
-        return json.get("choices").getAsJsonArray().get(0).getAsJsonObject().get("text").getAsString();
+        System.out.println("原句:"+originalReply);
+        JsonObject json = gson.fromJson(originalReply+"", JsonObject.class);
+        String reply = json.get("choices").getAsJsonArray().get(0).getAsJsonObject().get("text").getAsString();
+        if (getConfig().getBoolean("APISet.Record")) SendJson.record.add("GPT:"+reply);
+        return reply;
     }
 
     public void reload(){
