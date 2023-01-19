@@ -4,8 +4,8 @@ MinecraftBukkit服务器使用ChatGPT对话
 本插件是一个可以让bukkit服务器中玩家提问ChatGPT的插件，有着api模式和网页访问ChatGPT模式
 接下来是两种模式的不同使用方法
 # 各种模式
-1.使用API模式
-2.使用网页访问模式
+1. 使用API模式
+2. ~~使用网页访问模式~~ 1.0.2版本之前还能用(暂时删除了)
 ## API模式
 ### 需求
 openai的API KEY
