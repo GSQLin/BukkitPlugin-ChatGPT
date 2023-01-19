@@ -3,9 +3,16 @@ APISet:
   #如果APIKey填了就使用gpt003的api来访问(速度快)/如果直接是 APIKey: ''那么就是要用网页和python的那个方法了
   APIKey: ''
   #长度不建议太长，(毕竟api消耗太快，你钱包用扛不住)，不过太短回答补全,7的话正好就是回答是活着不是这样的问题
-  Maximum-length: 16
+  Max_tokens: 16
   #这个是幽默程度，最大是1，可以写到后两位数
   Temperature: 0.7
   #是否有历史记录,如果设置为true那么玩家问问题的时候gpt会联系上面的内容进行回答,如果设置为false那么每个问题就不会考虑到之前说的
   Record: true
-ReplyFormat: '&r<&bChat&3GPT&r>&7:&r{reply}'
+ChatGPTButton:
+  display: '&r<&bChat&3GPT&r>'
+  click: '@ChatGPT'
+  hover: '§3点我,快速与GPT聊天'
+ReplyFormat: '{button}&7:&r{reply}'
+ChatSendGPT:
+  keyword: '@ChatGPT'
+  replace: '&3@ChatGPT&r'

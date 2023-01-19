@@ -4,8 +4,7 @@ plugins {
 }
 
 group = 'me.gsqlin.chatgpt.ChatGPT'
-
-version = '1.0.1'
+version = '1.0.2'
 
 repositories {
     mavenCentral()
@@ -13,11 +12,19 @@ repositories {
         name = 'spigotmc-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
 }
 
 dependencies {
-    compileOnly 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
-    compileOnly 'commons-io:commons-io:2.8.0'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+/*
+    compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
+*/
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }
 

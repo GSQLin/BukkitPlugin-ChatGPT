@@ -12,7 +12,7 @@ public class SendJson {
     private Double temperature;
     private Integer max_tokens;
     public SendJson(){
-        this.stop = new String[]{"Player:","GPT:"};
+        this.stop = new String[]{"\nHuman:","\n\nAI:"};
         this.model = "text-davinci-003";
         this.prompt = "你好";
         this.temperature = 0.7;
@@ -51,13 +51,14 @@ public class SendJson {
         this.max_tokens = maxTokens;
     }
 
-    public static String getInformationWithRecords(){
+    public static String getInformationWithRecords(String nowMsg){
         StringBuilder builder = new StringBuilder();
         for (String s : record) {
             builder.append(s);
         }
-        ChatGPT.getInstance().getLogger().info(builder.toString());
-        return builder.toString();
+        String msg = builder.append("Human:"+nowMsg).toString();
+        ChatGPT.getInstance().getLogger().info(msg);
+        return msg;
     }
 
     public String[] getStop() {
