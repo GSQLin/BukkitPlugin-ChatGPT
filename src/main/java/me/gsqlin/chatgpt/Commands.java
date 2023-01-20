@@ -18,7 +18,7 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("chat")){
-                if (sender.hasPermission("chatgpt.chat")){
+                if (!sender.hasPermission("chatgpt.chat")){
                     sender.sendMessage("§c你没有权限");
                     return false;
                 }
@@ -31,7 +31,7 @@ public class Commands implements CommandExecutor {
                 return false;
             }
             if (args[0].equalsIgnoreCase("reload")){
-                if (sender.hasPermission("chatgpt.reload")){
+                if (!sender.hasPermission("chatgpt.reload")){
                     sender.sendMessage("§c你没有权限");
                     return false;
                 }
@@ -40,7 +40,7 @@ public class Commands implements CommandExecutor {
                 return false;
             }
             if (args[0].equalsIgnoreCase("clean")){
-                if (sender.hasPermission("chatgpt.clean")){
+                if (!sender.hasPermission("chatgpt.clean")){
                     sender.sendMessage("§c你没有权限");
                     return false;
                 }
