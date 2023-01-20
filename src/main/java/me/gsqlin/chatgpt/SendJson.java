@@ -57,7 +57,6 @@ public class SendJson {
             builder.append(s);
         }
         String msg = builder.append("Human:"+nowMsg).toString();
-        ChatGPT.getInstance().getLogger().info(msg);
         return msg;
     }
 
