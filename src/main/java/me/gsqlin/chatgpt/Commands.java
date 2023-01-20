@@ -16,27 +16,34 @@ public class Commands implements CommandExecutor {
     };
     @Override
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
-        if (!sender.isOp()){
-            sender.sendMessage("§c你没有权限!");
-            return false;
-        }
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("chat")){
+                if (sender.hasPermission("chatgpt.chat")){
+                    sender.sendMessage("§c你没有权限");
+                    return false;
+                }
                 if (args.length >= 2){
                     String sendMsg = getMsg(args,1);
                     plugin.toBeSend.add(sendMsg);
-                    sender.sendMessage("§a发送:"+ sendMsg);
                 }else{
                     sender.sendMessage("§c没有发送内容不能发送");
                 }
                 return false;
             }
             if (args[0].equalsIgnoreCase("reload")){
+                if (sender.hasPermission("chatgpt.reload")){
+                    sender.sendMessage("§c你没有权限");
+                    return false;
+                }
                 plugin.reload();
                 sender.sendMessage("§a重载完成!");
                 return false;
             }
             if (args[0].equalsIgnoreCase("clean")){
+                if (sender.hasPermission("chatgpt.clean")){
+                    sender.sendMessage("§c你没有权限");
+                    return false;
+                }
                 SendJson.record.clear();
                 sender.sendMessage("§a已经清理了对话记录");
                 return false;

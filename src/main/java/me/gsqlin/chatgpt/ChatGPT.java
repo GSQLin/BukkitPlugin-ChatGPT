@@ -24,6 +24,8 @@ public final class ChatGPT extends JavaPlugin {
     Gson gson = new Gson();
     SendJson sendJson = new SendJson();
     ArrayList<String> toBeSend = new ArrayList<>(); //待发送的列表
+
+    Boolean isHandle = false;
     @Override
     public void onEnable() {
         //载好配置
@@ -116,7 +118,7 @@ public final class ChatGPT extends JavaPlugin {
                 .append(new ComponentBuilder(display)
                         .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,clickString))
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder(hoverString).create()))
-                        .create()).reset()
+                        .create())
                 .append(new ComponentBuilder(tailString).create())
                 .create();
         for (Player player : getServer().getOnlinePlayers()) {
@@ -129,6 +131,9 @@ public final class ChatGPT extends JavaPlugin {
             @Override
             public void run() {
                 if (toBeSend.size() < 1)return;//没有内容就不处理了
+                //做到不处理多条问题
+                if (isHandle) return;
+                isHandle = true;
                 //获取待发送要发送的信息//并删除
                 String sendMsg = toBeSend.get(0);
                 toBeSend.remove(sendMsg);
@@ -151,6 +156,7 @@ public final class ChatGPT extends JavaPlugin {
                         ,reply);
                 //单独给后台发送
                 getLogger().info(buttonText);
+                isHandle = false;
             }
         }.runTaskTimerAsynchronously(this,0,60);
     }

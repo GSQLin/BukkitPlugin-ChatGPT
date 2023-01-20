@@ -5,3 +5,10 @@ api-version: 1.16
 commands:
   chatgpt:
     aliases: [ gpt ]
+permissions:
+  chatgpt.chat:
+    default: not op
+  chatgpt.clean:
+    default: op
+  chatgpt.reload:
+    default: op
