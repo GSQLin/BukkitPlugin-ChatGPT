@@ -6,12 +6,10 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.swing.plaf.basic.ComboPopup;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -19,13 +17,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Random;
 
 public final class ChatGPT extends JavaPlugin {
+    BukkitRunnable regularCleanRunnable;
+    Random random = new Random(); //不想重复实例随机工具
     Gson gson = new Gson();
     SendJson sendJson = new SendJson();
     ArrayList<String> toBeSend = new ArrayList<>(); //待发送的列表
-
     Boolean isHandle = false;
+    ArrayList<Player> limitedPlayer = new ArrayList<>();
     @Override
     public void onEnable() {
         //载好配置
@@ -49,6 +50,9 @@ public final class ChatGPT extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         sendJson = new SendJson();
+        //判断关闭定时清理，然后判断是否开了定时清理后在创建一个
+        if (regularCleanRunnable != null) regularCleanRunnable.cancel();
+        if (getConfig().getBoolean("RegularClean.enable"))RegularClean();
     }
     public void setSendJsonData(){
         sendJson.setMaxTokens(getConfig().getInt("APISet.Max_tokens"));
@@ -159,5 +163,19 @@ public final class ChatGPT extends JavaPlugin {
                 isHandle = false;
             }
         }.runTaskTimerAsynchronously(this,0,60);
+    }
+    //专门用来清理的记录的
+    public void RegularClean(){
+        regularCleanRunnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                SendJson.record.clear();
+                for (Player player : getServer().getOnlinePlayers()) {
+                    player.sendMessage(getConfig().getString("RegularClean.message").replace("&","§"));
+                }
+            }
+        };
+        regularCleanRunnable.runTaskTimer(this,0,
+                20*60*getConfig().getInt("RegularClean.time"));
     }
 }

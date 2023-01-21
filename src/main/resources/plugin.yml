@@ -12,3 +12,5 @@ permissions:
     default: op
   chatgpt.reload:
     default: op
+  chatgpt.unlimited:
+    default: op

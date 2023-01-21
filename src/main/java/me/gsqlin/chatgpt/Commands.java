@@ -3,6 +3,8 @@ package me.gsqlin.chatgpt;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Commands implements CommandExecutor {
     ChatGPT plugin = ChatGPT.getInstance();
@@ -23,6 +25,31 @@ public class Commands implements CommandExecutor {
                     return false;
                 }
                 if (args.length >= 2){
+                    //该部分是事件限制
+                    if (plugin.getConfig().getBoolean("Limit.time.enable")){
+                        if (!sender.hasPermission("chatgpt.unlimited")){
+                            Player player = (Player) sender;
+                            if (plugin.limitedPlayer.contains(player)){
+                                player.sendMessage(plugin.getConfig().getString("Limit.time.message").replace("&","§"));
+                                return false;
+                            }else{
+                                plugin.limitedPlayer.add(player);
+                                new BukkitRunnable(){
+                                    @Override
+                                    public void run() {
+                                        plugin.limitedPlayer.remove(player);
+                                    }
+                                }.runTaskLater(plugin,
+                                        plugin.getConfig().getInt("Limit.time.value") * 60 * 20);
+                            }
+                        }
+                    }
+                    //该部分是概率限制
+                    if (plugin.getConfig().getBoolean("Limit.probability.enable")){
+                        double value = plugin.getConfig().getDouble("Limit.probability.value");
+                        double rd = plugin.random.nextDouble();
+                        if (rd <= value) return false;
+                    }
                     String sendMsg = getMsg(args,1);
                     plugin.toBeSend.add(sendMsg);
                 }else{

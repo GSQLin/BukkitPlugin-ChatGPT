@@ -9,6 +9,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e){
         String keyword = plugin.getConfig().getString("ChatSendGPT.keyword");
+        //判断是否有关键字
         if (e.getMessage().contains(keyword)){
             e.getPlayer().performCommand("chatgpt chat "+ e.getMessage().replace(keyword,""));
             e.setMessage(e.getMessage().replace(keyword,plugin.getConfig().getString("ChatSendGPT.replace")

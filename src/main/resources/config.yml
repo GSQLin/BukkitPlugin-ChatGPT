@@ -16,3 +16,15 @@ ReplyFormat: '{button}&7:&r{reply}'
 ChatSendGPT:
   keyword: '@ChatGPT'
   replace: '&3@ChatGPT&r'
+Limit: #有chatgpt.unlimited权限不会被限制
+  time: #每次提问完后冷却
+    enable: true #是否开启
+    value: 5 #单位为分钟
+    message: '&6你的提问失败请稍后在试!'
+  probability: #每次发送概率被chatgpt无视
+    enable: true #是否开启
+    value: 0.5 #这里是概率舍弃不是概率接收，所以这里有50%的概率不处理了
+RegularClean:
+  enable: true #是否开启
+  time: 10 #单位 分钟
+  message: '&r<&bChat&3GPT&r>&7:&r啊!好奇怪,要..要..要少脑子了&7(不一会——)&r我怎么在这里?&7(ChatGPT好像忘记了什么)&r'
