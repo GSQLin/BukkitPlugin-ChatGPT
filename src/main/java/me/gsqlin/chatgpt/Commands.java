@@ -21,8 +21,10 @@ public class Commands implements CommandExecutor {
         if (args.length >= 1){
             if (args[0].equalsIgnoreCase("chat")){
                 if (!sender.hasPermission("chatgpt.chat")){
-                    sender.sendMessage("§c你没有权限");
-                    return false;
+                    if (sender instanceof Player){
+                        sender.sendMessage("§c你没有权限");
+                        return false;
+                    }
                 }
                 if (args.length >= 2){
                     //该部分是事件限制
