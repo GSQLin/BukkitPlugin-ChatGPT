@@ -7,7 +7,7 @@ commands:
     aliases: [ gpt ]
 permissions:
   chatgpt.chat:
-    default: not op
+    default: true
   chatgpt.clean:
     default: op
   chatgpt.reload:
