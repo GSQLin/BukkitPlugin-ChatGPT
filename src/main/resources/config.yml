@@ -28,3 +28,15 @@ RegularClean:
   enable: true #是否开启
   time: 10 #单位 分钟
   message: '&r<&bChat&3GPT&r>&7:&r啊!好奇怪,要..要..要少脑子了&7(不一会——)&r我怎么在这里?&7(ChatGPT好像忘记了什么)&r'
+##因为'你好啊'和‘你好’在IKAnalyzer分词中会结果分别是 你 好啊|你好 这样判断的话得出的jaccard相似度是0多以单独出了两种
+##value是要监听的提问，type是类型，有自定义和缓存，similarity是相似度，reply是自定义类型才需要的回答，相似度1为100%
+##可以用的类型用CSTOM和CACHE，CSTOM需要reply值，CACHE不需要
+##CACHE类型在第一个提问后保存结果之后的所有类似提问都是这个结果
+##command的值需要单独说一下，它只能以发送者身份执行，所以建议自己套个命令组来用
+##可以用的变量只有{PLAYER}
+CustomReply:
+  - 'value=你好;type=CUSTOM;similarity=0.6;reply=你好，我是本服务器的chatgpt!'
+  - 'value=你好啊;type=CUSTOM;similarity=0.6;reply=你好，我是本服务器的chatgpt!'
+  - 'value=新年快乐;type=CACHE;similarity=0.8;command=give {PLAYER} grass 1'
+#你好啊和你好呀擦一个字，直接的相似度为0.333334 如果要测试两句话直接的相似度可以使用gpt test 第一句 第二句 来测试，这个指令是暂时的之后可能会删除
+#这个只是相似度对比，并不是意思相近度对比哦！

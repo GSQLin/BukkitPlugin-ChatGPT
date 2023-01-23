@@ -1,10 +1,10 @@
-package me.gsqlin.chatgpt;
+package me.gsqlin.chatgpt.data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SendJson {
-    static List<String> record = new ArrayList<>();
+    public static List<String> record = new ArrayList<>();
     private String[] stop;
     private int top_p;
     private String model;

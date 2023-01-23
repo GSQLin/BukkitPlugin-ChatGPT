@@ -2,9 +2,8 @@ plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
-
 group = 'me.gsqlin.chatgpt.ChatGPT'
-version = '1.0.3'
+version = '1.0.4'
 
 repositories {
     mavenCentral()
@@ -19,13 +18,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-/*
-    compileOnly 'net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT'
-*/
-    compileOnly 'com.google.code.gson:gson:2.10.1'
-
-    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 def targetJavaVersion = 8
@@ -50,14 +44,22 @@ processResources {
     }
 }
 
+task testJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'me.gsqlin.chatgpt.ChatGPT'
+    }
+}
+
 shadowJar {
-    configurations = [project.configurations.compileClasspath]
+    manifest {
+        inheritFrom project.tasks.testJar.manifest
+    }
     dependencies {
-/*
-        include(dependency( 'com.theokanning.openai-gpt3-java:api:0.9.0'))
-*/
-/*        exclude(dependency('org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'))
+        exclude(dependency('org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'))
+        exclude(dependency('com.google.code.gson:gson:2.8.0'))
+        exclude(dependency('commons-lang:commons-lang:2.6'))
         exclude(dependency('com.google.guava:guava:21.0'))
-        exclude(dependency('com.google.code.gson:gson:2.8.0'))*/
+        exclude(dependency('org.yaml:snakeyaml:1.27'))
+        exclude(dependency('net.md-5:bungeecord-chat:1.16-R0.4'))
     }
 }
